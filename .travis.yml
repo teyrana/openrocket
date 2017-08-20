@@ -1,5 +1,8 @@
 language: java
+sudo: required
+dist: trusty
 jdk:
   - oraclejdk7
+  - openjdk7
 script:
  - "ant -buildfile build.xml clean check jar unittest"
