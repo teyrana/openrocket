@@ -910,7 +910,7 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 
 	/**
 	 * Get the positioning of the component relative to its parent component.
-	 * This is one of the enums of {@link Position}.  A setter method is not provided,
+	 * This is one of the enums of {@link AxialMethod}.  A setter method is not provided,
 	 * but can be provided by a subclass.
 	 */
 	public final AxialMethod getAxialMethod() {
@@ -944,8 +944,7 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	 * Determine position relative to given position argument.  Note: This is a side-effect free method.  No state
 	 * is modified.
 	 *
-	 * @param outOffsetMethod the relative position to be used as the basis for the computation
-	 * @param relativeTo  the position is computed relative the the given component
+	 * @param asMethod the relative position to be used as the basis for the computation
 	 *
 	 * @return double position of the component relative to the parent, with respect to <code>position</code>
 	 */
@@ -1036,10 +1035,10 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	 * it should override this with a public method that simply calls this
 	 * supermethod AND fire a suitable ComponentChangeEvent.
 	 * 
-	 * @param value		the position value of the component.
+	 * @param newOffset - the position value of the component.
 	 */
-	public void setAxialOffset(double _value) {
-		this.setAxialOffset(this.axialMethod, _value);
+	public void setAxialOffset(double newOffset) {
+		this.setAxialOffset(this.axialMethod, newOffset);
 		this.fireComponentChangeEvent(ComponentChangeEvent.BOTH_CHANGE);
 	}
 	
@@ -1121,9 +1120,8 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	 * NOTE: this default implementation simply returns this.position
 	 * NOTE: the length of this array returned always equals this.getInstanceCount()
 	 *
-	 * @param c   an array of coordinates to shift.
-	 * @return    an array of shifted coordinates.  The method may modify the contents
-	 * 			  of the passed array and return the array itself.
+	 * @return    an array of coordinates, describing the instance locations offset from the component's center location.
+	 * 
 	 */
 	// @Override Me !
 	public Coordinate[] getInstanceLocations(){
