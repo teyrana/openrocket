@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.UUID;
+
 import org.junit.Test;
 
 import net.sf.openrocket.util.MathUtil;
@@ -136,10 +138,12 @@ public class FlightConfigurationTest extends BaseTestCase {
 	public void testSingleStageRocket() {
 		Rocket r1 = TestRockets.makeEstesAlphaIII();
 		FlightConfiguration config = r1.getSelectedConfiguration();
+		final UUID stage0Id = r1.getChild(0).getId();
+		final UUID stage1Id = r1.getChild(1).getId();
 		
 		// test explicitly setting only first stage active
 		config.clearAllStages();
-		config.setOnlyStage(0);
+		config.setOnlyStage(stage1Id);
 		
 		// test that getStageCount() returns correct value
 		int expectedStageCount = 1;
@@ -151,7 +155,7 @@ public class FlightConfigurationTest extends BaseTestCase {
 		assertThat("active stage count doesn't match", stageCount, equalTo(expectedStageCount));
 		
 		// test explicitly setting all stages up to first stage active
-		config.setOnlyStage(0);
+		config.setOnlyStage(stage0Id);
 		
 		// test explicitly setting all stages active
 		config.setAllStages();
@@ -246,6 +250,8 @@ public class FlightConfigurationTest extends BaseTestCase {
 		/* Setup */
 		Rocket rkt = TestRockets.makeBeta();
 		FlightConfiguration config = rkt.getSelectedConfiguration();
+		final UUID stage0Id = rkt.getChild(0).getId();
+		final UUID stage1Id = rkt.getChild(1).getId();		
 		
 		int expectedStageCount;
 		int stageCount;
@@ -255,42 +261,42 @@ public class FlightConfigurationTest extends BaseTestCase {
 		assertThat("stage count doesn't match", stageCount, equalTo(expectedStageCount));
 		
 		config.clearAllStages();
-		assertThat(" clear all stages: check #0: ", config.isStageActive(0), equalTo(false));
-		assertThat(" clear all stages: check #1: ", config.isStageActive(1), equalTo(false));
+		assertThat(" clear all stages: check #0: ", config.isStageActive(stage0Id), equalTo(false));
+		assertThat(" clear all stages: check #1: ", config.isStageActive(stage1Id), equalTo(false));
 		
 		// test explicitly setting only first stage active
-		config.setOnlyStage(0);
+		config.setOnlyStage(stage0Id);
 		
 		expectedStageCount = 1;
 		stageCount = config.getActiveStageCount();
 		assertThat("active stage count doesn't match", stageCount, equalTo(expectedStageCount));
 		
-		assertThat(" setting single stage active: ", config.isStageActive(0), equalTo(true));
+		assertThat(" setting single stage active: ", config.isStageActive(stage0Id), equalTo(true));
 		
 		// test explicitly setting all stages up to second stage active
-		config.setOnlyStage(1);
-		assertThat("Setting single stage active: ", config.isStageActive(0), equalTo(false));
-		assertThat("Setting single stage active: ", config.isStageActive(1), equalTo(true));
+		config.setOnlyStage(stage1Id);
+		assertThat("Setting single stage active: ", config.isStageActive(stage0Id), equalTo(false));
+		assertThat("Setting single stage active: ", config.isStageActive(stage1Id), equalTo(true));
 		
-		config.clearStage(0);
-		assertThat(" deactivate stage #0: ", config.isStageActive(0), equalTo(false));
-		assertThat("     active stage #1: ", config.isStageActive(1), equalTo(true));
+		config.clearStage(stage0Id);
+		assertThat(" deactivate stage #0: ", config.isStageActive(stage0Id), equalTo(false));
+		assertThat("     active stage #1: ", config.isStageActive(stage1Id), equalTo(true));
 		
 		// test explicitly setting all two stages active
 		config.setAllStages();
-		assertThat(" activate all stages: check stage #0: ", config.isStageActive(0), equalTo(true));
-		assertThat(" activate all stages: check stage #1: ", config.isStageActive(1), equalTo(true));
+		assertThat(" activate all stages: check stage #0: ", config.isStageActive(stage0Id), equalTo(true));
+		assertThat(" activate all stages: check stage #1: ", config.isStageActive(stage1Id), equalTo(true));
 		
 		// test toggling single stage
 		config.setAllStages();
-		config.toggleStage(0);
-		assertThat(" toggle stage #0: ", config.isStageActive(0), equalTo(false));
+		config.toggleStage(stage0Id);
+		assertThat(" toggle stage #0: ", config.isStageActive(stage0Id), equalTo(false));
 		
-		config.toggleStage(0);
-		assertThat(" toggle stage #0: ", config.isStageActive(0), equalTo(true));
+		config.toggleStage(stage0Id);
+		assertThat(" toggle stage #0: ", config.isStageActive(stage0Id), equalTo(true));
 		
-		config.toggleStage(0);
-		assertThat(" toggle stage #0: ", config.isStageActive(0), equalTo(false));
+		config.toggleStage(stage0Id);
+		assertThat(" toggle stage #0: ", config.isStageActive(stage0Id), equalTo(false));
 		
 	}
 	
@@ -303,19 +309,20 @@ public class FlightConfigurationTest extends BaseTestCase {
 		/* Setup */
 		Rocket rkt = TestRockets.makeBeta();
 		FlightConfiguration config = rkt.getSelectedConfiguration();
-		
+		final UUID stage0Id = rkt.getChild(0).getId();
+		final UUID stage1Id = rkt.getChild(1).getId();
 		
 		config.clearAllStages();
 		int expectedMotorCount = 0;
 		int actualMotorCount = config.getActiveMotors().size();
 		assertThat("active motor count doesn't match", actualMotorCount, equalTo(expectedMotorCount));
 		
-		config.setOnlyStage(0);
+		config.setOnlyStage(stage0Id);
 		expectedMotorCount = 1;
 		actualMotorCount = config.getActiveMotors().size();
 		assertThat("active motor count doesn't match: ", actualMotorCount, equalTo(expectedMotorCount));
 
-		config.setOnlyStage(1);
+		config.setOnlyStage(stage1Id);
 		expectedMotorCount = 1;
 		actualMotorCount = config.getActiveMotors().size();
 		assertThat("active motor count doesn't match: ", actualMotorCount, equalTo(expectedMotorCount));

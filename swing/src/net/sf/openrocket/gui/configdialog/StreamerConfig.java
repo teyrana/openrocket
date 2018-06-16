@@ -193,7 +193,7 @@ public class StreamerConfig extends RecoveryDeviceConfig {
 		
 		DeploymentConfiguration deploymentConfig = streamer.getDeploymentConfigurations().getDefault();
 		JComboBox<DeploymentConfiguration.DeployEvent> eventCombo = new JComboBox<DeploymentConfiguration.DeployEvent>(new EnumModel<DeploymentConfiguration.DeployEvent>(deploymentConfig, "DeployEvent"));
-		if( (component.getStageNumber() + 1 ) == d.getRocket().getStageCount() ){
+		if( component.equals(d.getRocket().getBottomCoreStage()) ){
 			//	This is the bottom stage.  restrict deployment options.
 			eventCombo.removeItem( DeployEvent.LOWER_STAGE_SEPARATION );
 		}

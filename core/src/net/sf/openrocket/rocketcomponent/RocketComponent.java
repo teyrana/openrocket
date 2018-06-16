@@ -1385,11 +1385,6 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 		children.add(index, component);
 		component.parent = this;
 		
-		if (component instanceof AxialStage) {
-			AxialStage nStage = (AxialStage) component;
-			this.getRocket().trackStage(nStage);
-		}
-		
 		this.checkComponentStructure();
 		component.checkComponentStructure();
 		
@@ -1424,11 +1419,6 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 
 		if (children.remove(component)) {
 			component.parent = null;
-			
-			if (component instanceof AxialStage) {
-				AxialStage stage = (AxialStage) component;
-				this.getRocket().forgetStage(stage);
-			}
 			
 			this.checkComponentStructure();
 			component.checkComponentStructure();
@@ -1591,21 +1581,6 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 			curComponent = curComponent.parent;
 		}
 		throw new IllegalStateException("getAssembly() called on hierarchy without a ComponentAssembly.");
-	}
-	
-	
-	/**
-	 * Return the stage number of the stage this component belongs to.  The stages
-	 * are numbered from zero upwards.
-	 *
-	 * @return   the stage number this component belongs to.
-	 */
-	public int getStageNumber() {
-		checkState();
-		
-		// obviously, this depends on AxialStage overriding <code> .getStageNumber() </code>.
-		// It does as of this writing, but check it just to be sure.... 
-		return this.getStage().getStageNumber();
 	}
 	
 	/**

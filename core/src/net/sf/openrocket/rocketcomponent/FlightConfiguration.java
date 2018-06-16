@@ -42,23 +42,22 @@ public class FlightConfiguration implements FlightConfigurableParameter<FlightCo
 	public final int instanceNumber;
 
 	private class StageFlags implements Cloneable {
-		public boolean active = true;
-		//public int prev = -1;
-		public int stageNumber = -1;
-		
-		public StageFlags( int _num, boolean _active) {
-			this.stageNumber = _num;
-			this.active = _active;
+		public boolean active;
+		public final UUID id;
+		public int number;
+		public final AxialStage instance; 
+
+		/*package-local*/ StageFlags( final AxialStage stage, boolean isActive) {
+			this.id = stage.getId();
+			this.number = -1;
+			this.active = isActive;
+			this.instance = stage;
 		}
 		
-		@Override
-		public StageFlags clone(){
-			return new StageFlags( this.stageNumber, true);
-		}
 	}
 	
 	/* Cached data */
-	final protected HashMap<Integer, StageFlags> stages = new HashMap<Integer, StageFlags>();
+	final protected HashMap<UUID, StageFlags> stages = new HashMap<UUID, StageFlags>();
 	final protected HashMap<MotorConfigurationId, MotorConfiguration> motors = new HashMap<MotorConfigurationId, MotorConfiguration>();
 	
 	private int boundsModID = -1;
@@ -114,60 +113,74 @@ public class FlightConfiguration implements FlightConfigurableParameter<FlightCo
 	/** 
 	 * This method flags a stage inactive.  Other stages are unaffected.
 	 * 
-	 * @param stageNumber  stage number to turn off
+	 * @param stageId  stage number to turn off
 	 */
-	public void clearStage(final int stageNumber) {
-		_setStageActive( stageNumber, false );
+	public void clearStage(final UUID stageId) {
+		_setStageActive( stageId, false );
 	}
 	
 	/** 
 	 * This method flags the specified stage as active, and all other stages as inactive.
 	 * 
-	 * @param stageNumber  stage number to activate
+	 * @param stageId stage number to activate
 	 */
-	public void setOnlyStage(final int stageNumber) {
+	public void setOnlyStage(final UUID stageId) {
 		_setAllStages(false);
-		_setStageActive(stageNumber, true);
+		_setStageActive(stageId, true);
 		updateMotors();
 	}
 	
 	/** 
 	 * This method flags the specified stage as requested.  Other stages are unaffected.
 	 * 
-	 * @param stageNumber   stage number to flag
+	 * @param stageId   stage number to flag
 	 * @param _active       inactive (<code>false</code>) or active (<code>true</code>)
 	 */
-	private void _setStageActive(final int stageNumber, final boolean _active ) {
-		if ((0 <= stageNumber) && (stages.containsKey(stageNumber))) {
-			stages.get(stageNumber).active = _active;
+	private void _setStageActive(final UUID stageId, final boolean _active ) {
+		if (stages.containsKey(stageId)) {
+			stages.get(stageId).active = _active;
 			return;
 		}
-		log.error("error: attempt to retrieve via a bad stage number: " + stageNumber);
+		log.error("error: attempt to retrieve via a bad stage number: " + stageId);
 	}
 	
 	
-	public void toggleStage(final int stageNumber) {
-		if ((0 <= stageNumber) && (stages.containsKey(stageNumber))) {
-			StageFlags flags = stages.get(stageNumber);
+	public void toggleStage(final UUID stageId) {
+		if (stages.containsKey(stageId)) {
+			StageFlags flags = stages.get(stageId);
 			flags.active = !flags.active;
 			return;
 		}
 		this.updateMotors();
-		log.error("error: attempt to retrieve via a bad stage number: " + stageNumber);
+		log.error("error: attempt to retrieve via a bad stage number: " + stageId);
 	}
 
 		
 	/**
 	 * Check whether the stage specified by the index is active.
 	 */
-	public boolean isStageActive(int stageNumber) {
-		if( -1 == stageNumber ) {
-			return false;
-		}
-		
-		return stages.get(stageNumber).active;
+	public boolean isStageActive(final UUID stageId) {
+		return stages.get(stageId).active;
 	}
 	
+	// this method is deprecated because it ignores instancing of parent components (e.g. Strapons or pods )
+	// if you're calling this method, you're probably not getting the numbers you expect.
+	private Collection<RocketComponent> getAllComponents() {
+		Queue<RocketComponent> toProcess = new ArrayDeque<RocketComponent>();
+		ArrayList<RocketComponent> toReturn = new ArrayList<>();
+		
+		toProcess.add(this.rocket);
+		while (!toProcess.isEmpty()) {
+			RocketComponent comp = toProcess.poll();
+			
+			toReturn.add(comp);
+			for (RocketComponent child : comp.getChildren()) {
+				toProcess.offer(child);
+			}
+		}
+		
+		return toReturn;
+	}
 	
 	// this method is deprecated because it ignores instancing of parent components (e.g. Strapons or pods )
 	// if you're calling this method, you're probably not getting the numbers you expect.
@@ -195,7 +208,7 @@ public class FlightConfiguration implements FlightConfigurableParameter<FlightCo
 		
 		for (StageFlags flags : this.stages.values()) {
 			if (flags.active) {
-				activeStages.add( rocket.getStage( flags.stageNumber) );
+				activeStages.add( flags.instance );
 			}
 		}
 		
@@ -219,7 +232,7 @@ public class FlightConfiguration implements FlightConfigurableParameter<FlightCo
 		AxialStage bottomStage = null;
 		for (StageFlags curFlags : this.stages.values()) {
 			if (curFlags.active) {
-				bottomStage = rocket.getStage( curFlags.stageNumber);
+				bottomStage = curFlags.instance;
 			}
 		}
 		return bottomStage;
@@ -267,16 +280,16 @@ public class FlightConfiguration implements FlightConfigurableParameter<FlightCo
 		updateMotors();
 	}
 	
-	private void updateStages() {
-        if (this.rocket.getStageCount() == this.stages.size()) {
-            return;
-        }
-	                		
+	private void updateStages() {          		
 		this.stages.clear();
-		for (AxialStage curStage : this.rocket.getStageList()) {
-			
-			StageFlags flagsToAdd = new StageFlags( curStage.getStageNumber(), true);
-			this.stages.put(curStage.getStageNumber(), flagsToAdd);
+
+	    // just cycle through all components, and make sure each is in the stage list.
+		for (RocketComponent comp : getAllComponents()) {
+			if (AxialStage.class.isAssignableFrom(comp.getClass())) { 
+				AxialStage curStage = (AxialStage)comp;
+				StageFlags flagsToAdd = new StageFlags( curStage, true);
+				this.stages.put(curStage.getId(), flagsToAdd);
+			}
 		}
 	}
 	
@@ -387,8 +400,7 @@ public class FlightConfiguration implements FlightConfigurableParameter<FlightCo
 	 * Return whether a component is in a currently active stages.
 	 */
 	public boolean isComponentActive(final RocketComponent c) {
-		int stageNum = c.getStageNumber();
-		return this.isStageActive( stageNum );
+		return this.isStageActive(c.getStage().getId());
 	}
 
 	public boolean isComponentActive(final MotorMount c) {
@@ -528,8 +540,7 @@ public class FlightConfiguration implements FlightConfigurableParameter<FlightCo
 		final String fmt = "    [%-2s][%4s]: %6s \n";
 		buf.append(String.format(fmt, "#", "?actv", "Name"));
 		for (StageFlags flags : stages.values()) {
-			final int stageNumber = flags.stageNumber;
-			buf.append(String.format(fmt, stageNumber, (flags.active?" on": "off"), rocket.getStage( stageNumber).getName()));
+			buf.append(String.format(fmt, flags.id, (flags.active?" on": "off"), flags.instance.getName()));
 		}
 		buf.append("\n");
 		return buf.toString();
@@ -542,7 +553,7 @@ public class FlightConfiguration implements FlightConfigurableParameter<FlightCo
 				motors.size(), getName(), getId().toShortKey(), this.instanceNumber));
 		
 		for( MotorConfiguration curConfig : this.motors.values() ){
-			boolean active=this.isStageActive( curConfig.getMount().getStage().getStageNumber());
+			boolean active=this.isStageActive( curConfig.getMount().getStage().getId());
 			String activeString = (active?"active":"      ");
 			buf.append("    "+"("+activeString+")"+curConfig.toDebugDetail()+"\n");
 		}

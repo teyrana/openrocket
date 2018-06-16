@@ -183,7 +183,9 @@ public class FlightConfigurationPanel extends JPanel implements StateChangeListe
 	}
 	
 	private void updateButtonState() {
-		FlightConfigurationId currentId = rocket.getSelectedConfiguration().getFlightConfigurationID();
+		final FlightConfiguration currentConfig = rocket.getSelectedConfiguration();
+		final FlightConfigurationId currentId = currentConfig.getFlightConfigurationID();
+		
 		// Enable the remove/rename/copy buttons only when a configuration is selected.
 		removeConfButton.setEnabled(currentId.isValid());
 		renameConfButton.setEnabled(currentId.isValid());
@@ -196,7 +198,7 @@ public class FlightConfigurationPanel extends JPanel implements StateChangeListe
 		int recoveryDeviceCount = rocket.accept(new ListComponents<>(RecoveryDevice.class)).size();
 		
 		// Count the number of stages
-		int stageCount = rocket.getStageCount();
+		int stageCount = currentConfig.getStageCount();
 		
         // Enable the new configuration button only when a motor mount is defined.
 		newConfButton.setEnabled(motorMountCount > 0);

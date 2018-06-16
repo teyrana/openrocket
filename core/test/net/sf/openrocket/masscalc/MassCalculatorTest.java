@@ -442,8 +442,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		FlightConfiguration config = rocket.getEmptyConfiguration();
 		
 		// validate payload stage
-		AxialStage payloadStage = (AxialStage) rocket.getChild(0);
-		config.setOnlyStage( payloadStage.getStageNumber() );
+		config.setOnlyStage(TestRockets.FALCON_9H_PAYLOAD_STAGE_UUID);
 		
 		final RigidBody actualStructureData = MassCalculator.calculateStructure( config );
 		final Coordinate actualCM = actualStructureData.cm;
@@ -463,8 +462,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		rocket.setName("Falcon9Heavy."+Thread.currentThread().getStackTrace()[1].getMethodName());
 		
 		FlightConfiguration config = rocket.getEmptyConfiguration();
-		AxialStage coreStage = (AxialStage) rocket.getChild(1);
-		config.setOnlyStage( coreStage.getStageNumber() );
+		config.setOnlyStage(TestRockets.FALCON_9H_CORE_STAGE_UUID);
 		
 		final RigidBody actualData = MassCalculator.calculateStructure( config );
 		final Coordinate actualCM = actualData.cm;
@@ -485,8 +483,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		
 		FlightConfiguration config = rocket.getFlightConfiguration( new FlightConfigurationId( TestRockets.FALCON_9H_FCID_1) );
 		AxialStage core = (AxialStage) rocket.getChild(1);
-		final int coreNum = core.getStageNumber(); 
-		config.setOnlyStage( coreNum);
+		config.setOnlyStage(core.getId());
 		
 		final MotorMount mnt = (MotorMount)core.getChild(0);
 		final Motor motor = mnt.getMotorConfig( config.getFlightConfigurationID()).getMotor();
@@ -512,7 +509,8 @@ public class MassCalculatorTest extends BaseTestCase {
 		rocket.setName("Falcon9Heavy."+Thread.currentThread().getStackTrace()[1].getMethodName());
 		
 		FlightConfiguration config = rocket.getFlightConfiguration( new FlightConfigurationId( TestRockets.FALCON_9H_FCID_1) );
-		config.setOnlyStage( 1 ); 
+		AxialStage core = (AxialStage) rocket.getChild(1);
+		config.setOnlyStage( core.getId()); 
 		
 		RigidBody corePropInertia = MassCalculator.calculateMotor( config );
 		
@@ -536,7 +534,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		FlightConfiguration config = rocket.getEmptyConfiguration();
 		
 		ParallelStage boosters = (ParallelStage) rocket.getChild(1).getChild(0).getChild(1);
-		config.setOnlyStage( boosters.getStageNumber() );
+		config.setOnlyStage( boosters.getId() );
 		
 		final RigidBody actualData = MassCalculator.calculateStructure( config );
 		final Coordinate actualCM = actualData.getCM();
@@ -556,7 +554,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		rocket.setName("Falcon9Heavy."+Thread.currentThread().getStackTrace()[1].getMethodName());
 		
 		FlightConfiguration config = rocket.getFlightConfiguration( new FlightConfigurationId( TestRockets.FALCON_9H_FCID_1));
-		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_NUMBER );
+		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_UUID);
 		
 		RigidBody actualBoosterLaunchData = MassCalculator.calculateLaunch( config );
 		
@@ -579,7 +577,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		rocket.setName("Falcon9Heavy."+Thread.currentThread().getStackTrace()[1].getMethodName());
 		
 		FlightConfiguration config = rocket.getFlightConfiguration( new FlightConfigurationId( TestRockets.FALCON_9H_FCID_1));
-		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_NUMBER );
+		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_UUID);
 		
 		// Validate Booster Launch Mass
 		RigidBody spentData = MassCalculator.calculateBurnout( config );
@@ -601,7 +599,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		rocket.setName("Falcon9Heavy."+Thread.currentThread().getStackTrace()[1].getMethodName());
 		
 		FlightConfiguration config = rocket.getFlightConfiguration( new FlightConfigurationId( TestRockets.FALCON_9H_FCID_1) );
-		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_NUMBER );
+		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_UUID);
 		
 		RigidBody actualPropellant = MassCalculator.calculateMotor( config );
 		final Coordinate actCM= actualPropellant.getCM();
@@ -628,7 +626,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		rocket.setName("Falcon9Heavy."+Thread.currentThread().getStackTrace()[1].getMethodName());
 		
 		FlightConfiguration config = rocket.getFlightConfiguration( new FlightConfigurationId( TestRockets.FALCON_9H_FCID_1) );
-		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_NUMBER );
+		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_UUID);
 		
 		RigidBody actualInertia = MassCalculator.calculateMotor( config );
 
@@ -646,7 +644,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		rocket.setName("Falcon9Heavy."+Thread.currentThread().getStackTrace()[1].getMethodName());
 		
 		FlightConfiguration config = rocket.getFlightConfiguration( new FlightConfigurationId( TestRockets.FALCON_9H_FCID_1));
-		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_NUMBER );
+		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_UUID);
 		
 		RigidBody spent = MassCalculator.calculateBurnout( config);
 		
@@ -665,7 +663,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		rocket.setName("Falcon9Heavy."+Thread.currentThread().getStackTrace()[1].getMethodName());
 		
 		FlightConfiguration config = rocket.getFlightConfiguration( new FlightConfigurationId( TestRockets.FALCON_9H_FCID_1));
-		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_NUMBER );
+		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_UUID);
 		
 		
 		RigidBody launchData = MassCalculator.calculateLaunch( config);
@@ -687,7 +685,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		
 		FlightConfiguration config = rocket.getEmptyConfiguration();
 		rocket.setSelectedConfiguration( config.getId() );
-		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_NUMBER );
+		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_UUID);
 		
 		final ParallelStage boosters = (ParallelStage) rocket.getChild(1).getChild(0).getChild(1);
 		final double overrideMass = 0.5;
@@ -728,10 +726,11 @@ public class MassCalculatorTest extends BaseTestCase {
 		
 		FlightConfiguration config = rocket.getEmptyConfiguration();
 		rocket.setSelectedConfiguration( config.getId() );
-		
+
+		config.setOnlyStage(TestRockets.FALCON_9H_BOOSTER_STAGE_UUID);
+
 		ParallelStage boosters = (ParallelStage) rocket.getChild(1).getChild(0).getChild(1);
-		config.setOnlyStage( boosters.getStageNumber() );
-		
+
 		NoseCone nose = (NoseCone)boosters.getChild(0);
 		nose.setMassOverridden(true);
 		nose.setOverrideMass( 0.71 );
@@ -775,7 +774,7 @@ public class MassCalculatorTest extends BaseTestCase {
 		FlightConfiguration config = rocket.getEmptyConfiguration();
 		rocket.setSelectedConfiguration( config.getId() );
 		
-		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_NUMBER );
+		config.setOnlyStage( TestRockets.FALCON_9H_BOOSTER_STAGE_UUID );
 		ParallelStage boosters = (ParallelStage) rocket.getChild(1).getChild(0).getChild(1);
 		
 		NoseCone nose = (NoseCone)boosters.getChild(0);

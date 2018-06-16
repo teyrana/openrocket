@@ -1,6 +1,7 @@
 package net.sf.openrocket.util;
 
 import java.util.Random;
+import java.util.UUID;
 
 import net.sf.openrocket.appearance.Appearance;
 import net.sf.openrocket.database.Databases;
@@ -847,10 +848,10 @@ public class TestRockets {
 		return rocket;
 	}
 	
-	public final static String FALCON_9H_FCID_1="test_config #1: [ M1350, G77]";
-	public final static int FALCON_9H_PAYLOAD_STAGE_NUMBER=0;
-	public final static int FALCON_9H_CORE_STAGE_NUMBER=1;
-	public final static int FALCON_9H_BOOSTER_STAGE_NUMBER=2;
+	public final static String FALCON_9H_FCID_1 = "test_config #1: [ M1350, G77]";
+	public static UUID FALCON_9H_PAYLOAD_STAGE_UUID;
+	public static UUID FALCON_9H_CORE_STAGE_UUID;
+	public static UUID FALCON_9H_BOOSTER_STAGE_UUID;
 	
 	
 	
@@ -865,6 +866,7 @@ public class TestRockets {
 		// ====== Payload Stage ======
 		// ====== ====== ====== ======
 		AxialStage payloadStage = new AxialStage();
+		FALCON_9H_PAYLOAD_STAGE_UUID = payloadStage.getId();
 		payloadStage.setName("Payload Fairing");
 		rocket.addChild(payloadStage);
 
@@ -925,6 +927,7 @@ public class TestRockets {
 		// ====== Core Stage ====== 
 		// ====== ====== ====== ======
 		AxialStage coreStage = new AxialStage();
+		FALCON_9H_CORE_STAGE_UUID = coreStage.getId();
 		coreStage.setName("Core Stage");
 		rocket.addChild(coreStage);
 
@@ -960,6 +963,7 @@ public class TestRockets {
 				// ====== Booster Stage Set ======
 				// ====== ====== ====== ======
 				ParallelStage boosterStage = new ParallelStage();
+				FALCON_9H_BOOSTER_STAGE_UUID = boosterStage.getId();
 				boosterStage.setName("Booster Stage");
 				coreBody.addChild( boosterStage);
 				boosterStage.setAxialMethod(AxialMethod.BOTTOM);

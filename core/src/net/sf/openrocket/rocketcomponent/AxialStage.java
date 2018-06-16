@@ -15,8 +15,6 @@ public class AxialStage extends ComponentAssembly implements FlightConfigurableC
 	
 	/** list of separations to be happening*/
 	protected FlightConfigurableParameterSet<StageSeparationConfiguration> separations;
-	/** number of stages */
-	protected int stageNumber;
 	
 	/**
 	 * default constructor, builds a rocket with zero stages
@@ -24,7 +22,6 @@ public class AxialStage extends ComponentAssembly implements FlightConfigurableC
 	public AxialStage(){
 		this.separations = new FlightConfigurableParameterSet<StageSeparationConfiguration>( new StageSeparationConfiguration());
 		this.axialMethod = AxialMethod.AFTER;
-		this.stageNumber = 0;
 	}
 	
 	/**
@@ -97,28 +94,7 @@ public class AxialStage extends ComponentAssembly implements FlightConfigurableC
 		copy.separations = new FlightConfigurableParameterSet<StageSeparationConfiguration>(separations);
 		return copy;
 	}
-	
-	/** 
-	 * Stages may be positioned relative to other stages. In that case, this will set the stage number 
-	 * against which this stage is positioned.
-	 * 
-	 * @return the stage number which this stage is positioned relative to
-	 */
-	public int getRelativeToStage() {
-		if (null == this.parent) {
-			return -1;
-		} else if(1 == this.getInstanceCount()){
-			return --this.stageNumber;
-		} else {
-			return this.parent.getStageNumber();
-		}
-	}
-	
-	@Override
-	public int getStageNumber() {
-		return this.stageNumber;
-	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * axialStage is always after 
@@ -136,15 +112,7 @@ public class AxialStage extends ComponentAssembly implements FlightConfigurableC
 		return ( this instanceof ParallelStage )
 				||( getRocket().getBottomCoreStage().equals(this));
 	}
-
-	/**
-	 * sets the stage number
-	 * @param newStageNumber
-	 */
-	public void setStageNumber(final int newStageNumber) {
-		this.stageNumber = newStageNumber;
-	}
-
+	
 	@Override
 	protected StringBuilder toDebugDetail() {
 		StringBuilder buf = super.toDebugDetail();
@@ -169,36 +137,46 @@ public class AxialStage extends ComponentAssembly implements FlightConfigurableC
 		return buff.toString();
 	}
 
+
+	/**
+	 * Get the stage below this one
+	 *
+	 * @return the stage number which this stage is positioned relative to
+	 */
+	public AxialStage getLowerStage(){
+		AxialStage stage = this.getStage();
+		Rocket r = (Rocket)stage.parent;
+		final int stageIndex = r.getChildPosition(stage);
+		return ((AxialStage)parent.getChild(stageIndex-1));
+	}
+
 	/**
 	 * gets the previous stage installed in the rockets
-	 * returns null if this is the first stage
+	 *
 	 * @return	the previous stage in the rocket
 	 */
 	public AxialStage getUpperStage() {
-		if( null == this.parent ) {
-			return null; 
-		}else if(Rocket.class.isAssignableFrom(this.parent.getClass()) ){
-			final int thisIndex = getStageNumber();
-			if( 0 < thisIndex ){
-				return (AxialStage)parent.getChild(thisIndex-1);
-			}
-		}else {
-			return this.parent.getStage();
+		AxialStage stage = this.getStage();
+		Rocket r = (Rocket)stage.parent;
+		final int stageIndex = r.getChildPosition(stage);
+		if(0==stageIndex){
+			return null;
+		} else {
+			return ((AxialStage) parent.getChild(stageIndex - 1));
 		}
-		return null;
 	}
-	
+
 	@Override
 	public void toDebugTreeNode(final StringBuilder buffer, final String indent) {
 		
 		Coordinate[] relCoords = this.getInstanceOffsets();
 		Coordinate[] absCoords = this.getComponentLocations();
 		if( 1 == getInstanceCount()){
-			buffer.append(String.format("%-40s|  %5.3f; %24s; %24s;", indent+this.getName()+" (# "+this.getStageNumber()+")", 
+			buffer.append(String.format("%-40s|  %5.3f; %24s; %24s;", (indent+this.getName()), 
 					this.getLength(), this.getPosition(), this.getComponentLocations()[0]));
 			buffer.append(String.format("len: %6.4f )(offset: %4.1f  via: %s )\n", this.getLength(), this.getAxialOffset(), this.axialMethod.name() ));
 		}else{
-			buffer.append(String.format("%-40s|(len: %6.4f )(offset: %4.1f via: %s)\n", (indent+this.getName()+"(# "+this.getStageNumber()+")"), this.getLength(), this.getAxialOffset(), this.axialMethod.name() ));
+			buffer.append(String.format("%-40s|(len: %6.4f )(offset: %4.1f via: %s)\n", (indent+this.getName()), this.getLength(), this.getAxialOffset(), this.axialMethod.name() ));
 			for (int instanceNumber = 0; instanceNumber < this.getInstanceCount(); instanceNumber++) {
 				Coordinate instanceRelativePosition = relCoords[instanceNumber];
 				Coordinate instanceAbsolutePosition = absCoords[instanceNumber];

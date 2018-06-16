@@ -18,12 +18,12 @@ public class ParallelStage extends AxialStage implements FlightConfigurableCompo
 	
 	protected int instanceCount = 1;
 
-	protected AngleMethod angleMethod = AngleMethod.RELATIVE;
-	protected double angleSeparation = Math.PI;
-	protected double angleOffset_rad = 0;
+	private AngleMethod angleMethod = AngleMethod.RELATIVE;
+	private double angleSeparation = Math.PI;
+	private double angleOffset_rad = 0;
 	
-	protected RadiusMethod radiusMethod = RadiusMethod.RELATIVE;
-	protected double radiusOffset_m = 0;
+	private RadiusMethod radiusMethod = RadiusMethod.RELATIVE;
+	private double radiusOffset_m = 0;
 	
 	public ParallelStage() {
 		this.instanceCount = 2;
@@ -70,7 +70,26 @@ public class ParallelStage extends AxialStage implements FlightConfigurableCompo
 		
 		return bounds;
 	}
-	
+
+
+	/**
+	 * Get the stage below this one
+	 *
+	 * @return the stage number which this stage is positioned relative to
+	 */
+	public AxialStage getLowerStage(){
+		return null;
+	}
+
+	/**
+	 * gets the previous stage installed in the rockets
+	 *
+	 * @return	the previous stage in the rocket
+	 */
+	public AxialStage getUpperStage() {
+		return this.parent.getStage();
+	}
+
 	/**
 	 * Check whether the given type can be added to this component.  A Stage allows
 	 * only BodyComponents to be added.
@@ -161,7 +180,7 @@ public class ParallelStage extends AxialStage implements FlightConfigurableCompo
 		
 		return toReturn;
 	}
-	
+
 	@Override
 	public String getPatternName(){
 		return (this.getInstanceCount() + "-ring");

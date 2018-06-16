@@ -65,7 +65,6 @@ public class Rocket extends ComponentAssembly {
 	// Flight configuration list
 	private FlightConfiguration selectedConfiguration;
 	private FlightConfigurableParameterSet<FlightConfiguration> configSet;
-	private HashMap<Integer, AxialStage> stageMap = new HashMap<>();
 	
 	// Does the rocket have a perfect finish (a notable amount of laminar flow)
 	private boolean perfectFinish = false;
@@ -109,16 +108,6 @@ public class Rocket extends ComponentAssembly {
 			s = "";
 		revision = s;
 		fireComponentChangeEvent(ComponentChangeEvent.NONFUNCTIONAL_CHANGE);
-	}
-	
-	/**
-	 * Return the number of stages in this rocket.
-	 *
-	 * @return   the number of stages in this rocket.
-	 */
-	public int getStageCount() {
-		checkState();
-		return this.stageMap.size();
 	}
 	
 	/**
@@ -183,14 +172,6 @@ public class Rocket extends ComponentAssembly {
 		return functionalModID;
 	}
 	
-	public Collection<AxialStage> getStageList() {
-		return this.stageMap.values();
-	}
-
-	public AxialStage getStage( final int stageNumber ) {
-		return this.stageMap.get( stageNumber);
-	}
-	
 	/*
 	 * Returns the stage at the top of the central stack
 	 * 
@@ -205,44 +186,9 @@ public class Rocket extends ComponentAssembly {
 	 * 
 	 * @Return a reference to the topmost stage
 	 */
-	/*package-local*/ AxialStage getBottomCoreStage(){
+	public AxialStage getBottomCoreStage(){
 		// get last stage that's a direct child of the rocket.
 		return (AxialStage) children.get( children.size()-1 );
-	}
-	
-	@Override
-	public int getStageNumber() {
-		// invalid, error value
-		return -1;
-	}
-	private int getNewStageNumber() {
-		int guess = 0;
-		while (stageMap.containsKey(guess)) {
-			guess++;
-		}
-		return guess;
-	}
-
-    /*package-local*/ void trackStage(final AxialStage newStage) {
-		int stageNumber = newStage.getStageNumber();
-		AxialStage value = stageMap.get(stageNumber);
-		
-		if (newStage.equals(value)) {
-			// stage is already added
-			if( newStage != value ){
-				// but the value is the wrong instance
-				stageMap.put(stageNumber, newStage);
-			}
-			return;
-		} else {
-			stageNumber = getNewStageNumber();
-			newStage.setStageNumber(stageNumber);
-			this.stageMap.put(stageNumber, newStage);
-		}
-	}
-
-    /*package-local*/ void forgetStage(final AxialStage oldStage) {
-		this.stageMap.remove(oldStage.getStageNumber());
 	}
 	
 	public ReferenceType getReferenceType() {
@@ -316,7 +262,6 @@ public class Rocket extends ComponentAssembly {
 		
 		// Rocket copy is cloned, so non-trivial members must be cloned as well:
 		copy.configSet = new FlightConfigurableParameterSet<FlightConfiguration>( this.configSet );
-		copy.stageMap = new HashMap<Integer, AxialStage>();
 		copy.selectedConfiguration = copy.configSet.get( this.getSelectedConfiguration().getId());
 		copy.listenerList = new ArrayList<EventListener>();
 		
@@ -697,7 +642,7 @@ public class Rocket extends ComponentAssembly {
 	 * Return a flight configuration.  If the supplied index is out of bounds, an exception is thrown.
 	 * If the default instance is allowed, the default will be at index 0. 
 	 *
-	 * @param 	includeDefault 	Whether to allow returning the default instance
+	 * @param 	allowDefault 	Whether to allow returning the default instance
 	 * @param 	configIndex 	The flight configuration index number
 	 * @return	a 				FlightConfiguration instance 
 	 */

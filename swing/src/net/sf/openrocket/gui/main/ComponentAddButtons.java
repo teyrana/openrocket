@@ -535,7 +535,7 @@ public class ComponentAddButtons extends JPanel implements Scrollable {
 			if (c == null || c instanceof Rocket) {
 				// Add as last body component of the last stage
 				Rocket rocket = document.getRocket();
-				return new Pair<RocketComponent, Integer>(rocket.getChild(rocket.getStageCount() - 1),
+				return new Pair<RocketComponent, Integer>(rocket.getChild(rocket.getSelectedConfiguration().getStageCount() - 1),
 						null);
 			}
 			

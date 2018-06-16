@@ -2,6 +2,7 @@ package net.sf.openrocket.simulation;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -294,10 +295,6 @@ public class BasicEventSimulationEngine implements SimulationEngine {
 			
 			// Check for stage separation event
 			for (AxialStage stage : currentStatus.getConfiguration().getActiveStages()) {
-				int stageNo = stage.getStageNumber();
-				if (stageNo == 0)
-					continue;
-				
 				StageSeparationConfiguration separationConfig = stage.getSeparationConfigurations().get(this.fcid);
 				if (separationConfig.getSeparationEvent().isSeparationEvent(event, stage)) {
 					addEvent(new FlightEvent(FlightEvent.Type.STAGE_SEPARATION,
@@ -379,7 +376,7 @@ public class BasicEventSimulationEngine implements SimulationEngine {
 				
 				AxialStage stage = motorState.getMount().getStage();
 				//log.debug( " adding EJECTION_CHARGE event for motor "+motorState.getMotor().getDesignation()+" on stage "+stage.getStageNumber()+": "+stage.getName());
-				log.debug( " detected Motor Burnout for motor "+motorState.getMotor().getDesignation()+"@ "+event.getTime()+"  on stage "+stage.getStageNumber()+": "+stage.getName());
+				log.debug( " detected Motor Burnout for motor "+motorState.getMotor().getDesignation()+"@ "+event.getTime()+"  on stage "+stage.getStage().getId()+": "+stage.getName());
 				
 				
 				double delay = motorState.getEjectionDelay();
@@ -403,16 +400,16 @@ public class BasicEventSimulationEngine implements SimulationEngine {
 				currentStatus.getFlightData().addEvent(event);
 				
 				RocketComponent boosterStage = event.getSource();
-				final int stageNumber = boosterStage.getStageNumber();
+				final UUID stageId = boosterStage.getId();
 	
 				// Mark the status as having dropped the booster
-				currentStatus.getConfiguration().clearStage( stageNumber);
+				currentStatus.getConfiguration().clearStage( stageId);
 				
 				// Prepare the simulation branch
 				SimulationStatus boosterStatus = new SimulationStatus(currentStatus);
 				boosterStatus.setFlightData(new FlightDataBranch(boosterStage.getName(), FlightDataType.TYPE_TIME));
 				// Mark the booster status as only having the booster.
-				boosterStatus.getConfiguration().setOnlyStage(stageNumber);
+				boosterStatus.getConfiguration().setOnlyStage(stageId);
 				toSimulate.add(boosterStatus);
 				log.info(String.format("==>> @ %g; from Branch: %s ---- Branching: %s ---- \n",
 						currentStatus.getSimulationTime(), 
@@ -434,9 +431,9 @@ public class BasicEventSimulationEngine implements SimulationEngine {
 			
 			case RECOVERY_DEVICE_DEPLOYMENT:
 				RocketComponent c = event.getSource();
-				int n = c.getStageNumber();
+				final UUID id = c.getStage().getId();
 				// Ignore event if stage not active
-				if (currentStatus.getConfiguration().isStageActive(n)) {
+				if (currentStatus.getConfiguration().isStageActive(id)) {
 					// TODO: HIGH: Check stage activeness for other events as well?
 					
 					// Check whether any motor in the active stages is active anymore

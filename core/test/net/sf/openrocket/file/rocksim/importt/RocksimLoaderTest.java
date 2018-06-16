@@ -85,7 +85,7 @@ public class RocksimLoaderTest extends BaseTestCase {
         //not overridden for each stage.
         Assert.assertEquals("Three Stage Everything Included Rocket", doc.getRocket().getName());
         Assert.assertEquals(0, loader.getWarnings().size());
-        Assert.assertEquals(3, rocket.getStageCount());
+        Assert.assertEquals(3, rocket.getSelectedConfiguration().getStageCount());
         AxialStage stage1 = (AxialStage) rocket.getChild(0);
         Assert.assertFalse(stage1.isMassOverridden());
         Assert.assertFalse(stage1.isCGOverridden());
@@ -109,7 +109,7 @@ public class RocksimLoaderTest extends BaseTestCase {
         rocket = doc.getRocket();
         Assert.assertNotNull(rocket);
         Assert.assertEquals("Three Stage Everything Included Rocket - Override Total Mass/CG", doc.getRocket().getName());
-        Assert.assertEquals(3, rocket.getStageCount());
+        Assert.assertEquals(3, rocket.getSelectedConfiguration().getStageCount());
         stage1 = (AxialStage) rocket.getChild(0);
         stage2 = (AxialStage) rocket.getChild(1);
         stage3 = (AxialStage) rocket.getChild(2);
@@ -170,7 +170,7 @@ public class RocksimLoaderTest extends BaseTestCase {
         Assert.assertNotNull(doc);
         rocket = doc.getRocket();
         Assert.assertNotNull(rocket);
-        Assert.assertEquals(1, rocket.getStageCount());
+        Assert.assertEquals(1, rocket.getSelectedConfiguration().getStageCount());
         AxialStage stage1 = (AxialStage) rocket.getChild(0);
         Assert.assertEquals("Nose cone", stage1.getChild(0).getName());
         Assert.assertEquals("Forward Body tube", stage1.getChild(1).getName());

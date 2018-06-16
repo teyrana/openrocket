@@ -42,8 +42,10 @@ public class StageSelector extends JPanel implements StateChangeListener {
 		
 		buttons.clear();
 		this.removeAll();
-		for(AxialStage stage : configuration.getRocket().getStageList()){
-			int stageNum = stage.getStageNumber(); 
+		Map<int, AxialStage> sequence = configuration.getRocket().getSelectedConfiguration().getStageSequence();
+		for(Pair<int, AxialStage> each: sequence) {
+		    AxialStage stage = each.second;
+			int stageNum = stage.getId(); 
 			JToggleButton button = new JToggleButton(new StageAction(stageNum));
 			button.setSelected(true);
 			this.add(button);

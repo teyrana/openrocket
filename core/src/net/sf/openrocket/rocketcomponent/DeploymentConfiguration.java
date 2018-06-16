@@ -11,7 +11,7 @@ import net.sf.openrocket.util.Pair;
 public class DeploymentConfiguration implements FlightConfigurableParameter<DeploymentConfiguration> {
 	
 	
-	public static enum DeployEvent {
+	public enum DeployEvent {
 		LAUNCH(trans.get("RecoveryDevice.DeployEvent.LAUNCH")) {
 			@Override
 			public boolean isActivationEvent(DeploymentConfiguration config, FlightEvent e, RocketComponent source) {
@@ -24,7 +24,7 @@ public class DeploymentConfiguration implements FlightConfigurableParameter<Depl
 				if (e.getType() != FlightEvent.Type.EJECTION_CHARGE)
 					return false;
 				RocketComponent charge = e.getSource();
-				return charge.getStageNumber() == source.getStageNumber();
+				return charge.getStage().getId().equals(source.getStage().getId());
 			}
 		},
 		APOGEE(trans.get("RecoveryDevice.DeployEvent.APOGEE")) {
@@ -51,10 +51,11 @@ public class DeploymentConfiguration implements FlightConfigurableParameter<Depl
 			public boolean isActivationEvent(DeploymentConfiguration config, FlightEvent e, RocketComponent source) {
 				if (e.getType() != FlightEvent.Type.STAGE_SEPARATION)
 					return false;
-				
-				int separation = e.getSource().getStageNumber();
-				int current = source.getStageNumber();
-				return (current + 1 == separation);
+
+				final AxialStage lowerStage = source.getStage().getLowerStage();
+				final AxialStage sourceStage = e.getSource().getStage();
+
+				return (sourceStage.getId().equals(lowerStage.getId()));
 			}
 		},
 		NEVER(trans.get("RecoveryDevice.DeployEvent.NEVER")) {

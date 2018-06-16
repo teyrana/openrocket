@@ -11,13 +11,12 @@ public class StageSeparationConfiguration implements FlightConfigurableParameter
 		//// Upper stage motor ignition
 		UPPER_IGNITION(trans.get("Stage.SeparationEvent.UPPER_IGNITION")) {
 			@Override
-			public boolean isSeparationEvent(FlightEvent e, AxialStage stage) {
+			public boolean isSeparationEvent(FlightEvent e, AxialStage targetStage) {
 				if (e.getType() != FlightEvent.Type.IGNITION)
 					return false;
-				
-				int ignition = e.getSource().getStageNumber();
-				int mount = stage.getStageNumber();
-				return (mount == ignition + 1);
+
+				final AxialStage sourceStage = e.getSource().getStage();
+				return (sourceStage.getId().equals(targetStage.getId()));
 			}
 		},
 		//// Current stage motor ignition
@@ -27,9 +26,7 @@ public class StageSeparationConfiguration implements FlightConfigurableParameter
 				if (e.getType() != FlightEvent.Type.IGNITION)
 					return false;
 				
-				int ignition = e.getSource().getStageNumber();
-				int mount = stage.getStageNumber();
-				return (mount == ignition);
+				return (e.getSource().getStage().getId().equals(stage.getId()));
 			}
 		},
 		//// Current stage motor burnout
@@ -38,10 +35,8 @@ public class StageSeparationConfiguration implements FlightConfigurableParameter
 			public boolean isSeparationEvent(FlightEvent e, AxialStage stage) {
 				if (e.getType() != FlightEvent.Type.BURNOUT)
 					return false;
-				
-				int ignition = e.getSource().getStageNumber();
-				int mount = stage.getStageNumber();
-				return (mount == ignition);
+
+				return (e.getSource().getStage().getId().equals(stage.getId()));
 			}
 		},
 		//// Current stage ejection charge
@@ -50,10 +45,8 @@ public class StageSeparationConfiguration implements FlightConfigurableParameter
 			public boolean isSeparationEvent(FlightEvent e, AxialStage stage) {
 				if (e.getType() != FlightEvent.Type.EJECTION_CHARGE)
 					return false;
-				
-				int ignition = e.getSource().getStageNumber();
-				int mount = stage.getStageNumber();
-				return (mount == ignition);
+
+				return (e.getSource().getStage().getId().equals(stage.getId()));
 			}
 		},
 		//// Launch

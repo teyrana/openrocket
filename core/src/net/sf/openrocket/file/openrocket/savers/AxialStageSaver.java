@@ -41,7 +41,7 @@ public class AxialStageSaver extends ComponentAssemblySaver {
 		super.addParams(c, elements);
 		AxialStage stage = (AxialStage) c;
 		
-		if (stage.getStageNumber() > 0) {
+		if (null == stage.getUpperStage()){
 			// NOTE:  Default config must be BEFORE overridden config for proper backward compatibility later on
 			elements.addAll(addSeparationConfigParams(stage.getSeparationConfigurations().getDefault(), false));
 			
