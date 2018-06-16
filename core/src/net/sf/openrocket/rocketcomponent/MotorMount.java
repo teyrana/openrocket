@@ -1,6 +1,7 @@
 package net.sf.openrocket.rocketcomponent;
 
 import java.util.Iterator;
+import java.util.UUID;
 
 import net.sf.openrocket.motor.MotorConfiguration;
 import net.sf.openrocket.util.ChangeSource;
@@ -69,7 +70,7 @@ public interface MotorMount extends ChangeSource, FlightConfigurableComponent {
 	public double getLength();
 
 	// duplicate of RocketComponent
-	public String getID();
+	public UUID getId();
 
 	// duplicate of RocketComponent 
 	public String getDebugName();

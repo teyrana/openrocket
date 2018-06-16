@@ -147,7 +147,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 					
 					SimulationModifier mod = new GenericComponentModifier(
 							trans.get(def.modifierNameKey), trans.get(def.modifierDescriptionKey), c, def.unitGroup,
-							def.multiplier, def.componentClass, c.getID(), def.methodName);
+							def.multiplier, def.componentClass, c.getId(), def.methodName);
 					setDefaultMinMax(mod, simulation);
 					modifiers.add(mod);
 				}
@@ -160,7 +160,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 						trans.get("optimization.modifier.rocketcomponent.overrideMass"),
 						trans.get("optimization.modifier.rocketcomponent.overrideMass.desc"),
 						c, UnitGroup.UNITS_MASS,
-						1.0, c.getClass(), c.getID(), "OverrideMass");
+						1.0, c.getClass(), c.getId(), "OverrideMass");
 				setDefaultMinMax(mod, simulation);
 				modifiers.add(mod);
 			}
@@ -169,7 +169,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 						trans.get("optimization.modifier.rocketcomponent.overrideCG"),
 						trans.get("optimization.modifier.rocketcomponent.overrideCG.desc"),
 						c, UnitGroup.UNITS_LENGTH,
-						1.0, c.getClass(), c.getID(), "OverrideCGX");
+						1.0, c.getClass(), c.getId(), "OverrideCGX");
 				mod.setMinValue(0);
 				mod.setMaxValue(c.getLength());
 				modifiers.add(mod);
@@ -185,7 +185,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 							trans.get("optimization.modifier.motormount.overhang"),
 							trans.get("optimization.modifier.motormount.overhang.desc"),
 							c, UnitGroup.UNITS_LENGTH,
-							1.0, c.getClass(), c.getID(), "MotorOverhang");
+							1.0, c.getClass(), c.getId(), "MotorOverhang");
 					setDefaultMinMax(mod, simulation);
 					modifiers.add(mod);
 					
@@ -215,7 +215,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 						trans.get("optimization.modifier.internalcomponent.position"),
 						trans.get("optimization.modifier.internalcomponent.position.desc"),
 						c, UnitGroup.UNITS_LENGTH,
-						1.0, c.getClass(), c.getID(), "AxialMethod");
+						1.0, c.getClass(), c.getId(), "AxialMethod");
 				mod.setMinValue(0);
 				mod.setMaxValue(parent.getLength());
 				modifiers.add(mod);
@@ -229,7 +229,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 						trans.get("optimization.modifier.finset.position"),
 						trans.get("optimization.modifier.finset.position.desc"),
 						c, UnitGroup.UNITS_LENGTH,
-						1.0, c.getClass(), c.getID(), "AxialMethod");
+						1.0, c.getClass(), c.getId(), "AxialMethod");
 				mod.setMinValue(0);
 				mod.setMaxValue(parent.getLength());
 				modifiers.add(mod);
@@ -243,7 +243,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 						trans.get("optimization.modifier.launchlug.position"),
 						trans.get("optimization.modifier.launchlug.position.desc"),
 						c, UnitGroup.UNITS_LENGTH,
-						1.0, c.getClass(), c.getID(), "AxialMethod");
+						1.0, c.getClass(), c.getId(), "AxialMethod");
 				mod.setMinValue(0);
 				mod.setMaxValue(parent.getLength());
 				modifiers.add(mod);
@@ -259,7 +259,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 						UnitGroup.UNITS_SHORT_TIME,
 						1.0,
 						c.getClass(),
-						c.getID(),
+						c.getId(),
 						"DeploymentConfiguration",
 						DeploymentConfiguration.class,
 						"DeployDelay");
@@ -275,7 +275,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 						UnitGroup.UNITS_DISTANCE,
 						1.0,
 						c.getClass(),
-						c.getID(),
+						c.getId(),
 						"DeploymentConfiguration",
 						DeploymentConfiguration.class,
 						"DeployAltitude") {
@@ -301,7 +301,7 @@ public class DefaultSimulationModifierService implements SimulationModifierServi
 							trans.get("optimization.modifier." + c.getClass().getSimpleName().toLowerCase(Locale.ENGLISH) + ".shapeparameter"),
 							trans.get("optimization.modifier." + c.getClass().getSimpleName().toLowerCase(Locale.ENGLISH) + ".shapeparameter.desc"),
 							c, UnitGroup.UNITS_NONE,
-							1.0, c.getClass(), c.getID(), "ShapeParameter");
+							1.0, c.getClass(), c.getId(), "ShapeParameter");
 					mod.setMinValue(shape.minParameter());
 					mod.setMaxValue(shape.maxParameter());
 					modifiers.add(mod);

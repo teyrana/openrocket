@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
@@ -106,7 +107,7 @@ public class ComponentTreeModel implements TreeModel, ComponentChangeListener {
 		if (enumer != null) {
 			while (enumer.hasMoreElements()) {
 				TreePath p = enumer.nextElement();
-				expanded.add(((RocketComponent) p.getLastPathComponent()).getID());
+				expanded.add(((RocketComponent) p.getLastPathComponent()).getId().toString());
 			}
 		}
 		
@@ -118,7 +119,7 @@ public class ComponentTreeModel implements TreeModel, ComponentChangeListener {
 		
 		// Re-expand the paths
 		for (String id : expanded) {
-			RocketComponent c = root.findComponent(id);
+			RocketComponent c = root.findComponent(UUID.fromString(id));
 			if (c == null)
 				continue;
 			tree.expandPath(makeTreePath(c));

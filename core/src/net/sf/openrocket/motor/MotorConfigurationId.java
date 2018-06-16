@@ -33,7 +33,7 @@ public final class MotorConfigurationId {
 			throw new NullPointerException("Provided FlightConfigurationId was null");
 		}
 		
-		final long mountHash= ((long)_mount.getID().hashCode()) << 32;
+		final long mountHash= ((long)_mount.getId().hashCode()) << 32;
 		final long fcidLower = _fcid.key.getMostSignificantBits();
 		this.key = new UUID( mountHash, fcidLower);
 	}

@@ -1,12 +1,6 @@
 package net.sf.openrocket.startup;
 
-import java.util.ArrayList;
-import java.util.EventListener;
-import java.util.EventObject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import net.sf.openrocket.database.Databases;
 import net.sf.openrocket.material.Material;
@@ -450,7 +444,7 @@ public abstract class Preferences implements ChangeSource {
 	public final String getUniqueID() {
 		String id = this.getString("id", null);
 		if (id == null) {
-			id = UniqueID.uuid();
+			id = UUID.randomUUID().toString();
 			this.putString("id", id);
 		}
 		return id;

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import javax.swing.Action;
 
@@ -73,7 +74,7 @@ public class IntegrationTest {
 	private AerodynamicCalculator aeroCalc = new BarrowmanCalculator();
 	private FlightConfiguration config;
 	private FlightConditions conditions;
-	private String massComponentID = null;
+	private UUID massComponentID = null;
 	
 	@BeforeClass
 	public static void setUp() throws Exception {
@@ -307,7 +308,7 @@ public class IntegrationTest {
 	
 	private MassComponent massComponent() {
 		if (massComponentID == null) {
-			massComponentID = document.getRocket().getChild(0).getChild(1).getChild(0).getID();
+			massComponentID = document.getRocket().getChild(0).getChild(1).getChild(0).getId();
 		}
 		return (MassComponent) document.getRocket().findComponent(massComponentID);
 	}

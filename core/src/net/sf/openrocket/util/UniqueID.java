@@ -25,14 +25,4 @@ public class UniqueID {
 		return nextId.getAndIncrement();
 	}
 
-	
-	/**
-	 * Return a new universally unique ID string.
-	 * 
-	 * @return	a unique identifier string.
-	 */
-	public static String uuid() {
-		return UUID.randomUUID().toString();
-	}
-	
 }

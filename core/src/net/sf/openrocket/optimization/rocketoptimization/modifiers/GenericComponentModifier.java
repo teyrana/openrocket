@@ -1,5 +1,7 @@
 package net.sf.openrocket.optimization.rocketoptimization.modifiers;
 
+import java.util.UUID;
+
 import net.sf.openrocket.document.Simulation;
 import net.sf.openrocket.optimization.general.OptimizationException;
 import net.sf.openrocket.rocketcomponent.RocketComponent;
@@ -14,7 +16,7 @@ import net.sf.openrocket.unit.UnitGroup;
 public class GenericComponentModifier extends GenericModifier<RocketComponent> {
 	
 	private final Class<? extends RocketComponent> componentClass;
-	private final String componentId;
+	private final UUID componentId;
 	
 	/**
 	 * Sole constructor.
@@ -30,7 +32,7 @@ public class GenericComponentModifier extends GenericModifier<RocketComponent> {
 	 * @param methodName			the base name of the getter/setter methods (without "get"/"set")
 	 */
 	public GenericComponentModifier(String modifierName, String modifierDescription, Object relatedObject, UnitGroup unitGroup,
-			double multiplier, Class<? extends RocketComponent> componentClass, String componentId, String methodName) {
+			double multiplier, Class<? extends RocketComponent> componentClass, UUID componentId, String methodName) {
 		super(modifierName, modifierDescription, relatedObject, unitGroup, multiplier, componentClass, methodName);
 		
 		this.componentClass = componentClass;

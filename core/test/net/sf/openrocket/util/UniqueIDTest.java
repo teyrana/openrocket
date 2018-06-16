@@ -17,13 +17,4 @@ public class UniqueIDTest {
 		
 	}
 	
-	
-	@Test
-	public void stringTest() {
-		String id = UniqueID.uuid();
-		assertNotNull(id);
-		assertNotSame(id, UniqueID.uuid());
-		assertNotSame(id, UniqueID.uuid());
-	}
-	
 }

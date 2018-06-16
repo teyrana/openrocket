@@ -1,12 +1,6 @@
 package net.sf.openrocket.rocketcomponent;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.EventObject;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +23,6 @@ import net.sf.openrocket.util.LineStyle;
 import net.sf.openrocket.util.MathUtil;
 import net.sf.openrocket.util.SafetyMutex;
 import net.sf.openrocket.util.StateChangeListener;
-import net.sf.openrocket.util.UniqueID;
 
 /**
  * 	Master class that defines components of rockets
@@ -113,7 +106,7 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	private String comment = "";
 	
 	// Unique ID of the component
-	private String id = null;
+	private UUID id = null;
 	
 	// Preset component this component is based upon
 	private ComponentPreset presetComponent = null;
@@ -868,20 +861,18 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 		presetComponent = null;
 		fireComponentChangeEvent(ComponentChangeEvent.NONFUNCTIONAL_CHANGE);
 	}
-	
-	
-	
+
 	/**
 	 * Returns the unique ID of the component.
 	 *
 	 * @return	the ID of the component.
 	 */
-	public final String getID() {
+	public final UUID getId() {
 		return id;
 	}
 	
 	public final String getDebugName() {
-		return (name + "/" + id.substring(0,8));
+		return (name + "/" + id.toString().substring(0,8));
 	}
 	
 	/**
@@ -889,7 +880,7 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	 */
 	private final void newID() {
 		mutex.verify();
-		this.id = UniqueID.uuid();
+		this.id = UUID.randomUUID();
 	}
 	
 	
@@ -1121,7 +1112,7 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	 * NOTE: the length of this array returned always equals this.getInstanceCount()
 	 *
 	 * @return    an array of coordinates, describing the instance locations offset from the component's center location.
-	 * 
+	 *
 	 */
 	// @Override Me !
 	public Coordinate[] getInstanceLocations(){
@@ -1663,12 +1654,12 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	 * @param idToFind  ID to search for.
 	 * @return    The component with the ID, or null if not found.
 	 */
-	public final RocketComponent findComponent(String idToFind) {
+	public final RocketComponent findComponent(UUID idToFind) {
 		checkState();
 		Iterator<RocketComponent> iter = this.iterator(true);
 		while (iter.hasNext()) {
 			RocketComponent c = iter.next();
-			if (c.getID().equals(idToFind))
+			if (c.getId().equals(idToFind))
 				return c;
 		}
 		return null;
@@ -2165,7 +2156,7 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 
 	/// debug functions
 	public String toDebugName(){
-		return this.getName()+"<"+this.getClass().getSimpleName()+">("+this.getID().substring(0,8)+")";
+		return this.getName()+"<"+this.getClass().getSimpleName()+">("+this.getId().toString().substring(0,8)+")";
 	}
 	
 	// multi-line output
