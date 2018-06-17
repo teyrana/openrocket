@@ -311,12 +311,12 @@ public class Rocket extends ComponentAssembly {
 	 * note:  the <hashmap>.clone() function returns a shallow copy-- which is probably appropriate. 
 	 */
 	@Override
-	public Rocket copyWithOriginalID() {
-		Rocket copy = (Rocket) super.copyWithOriginalID();
+	public Rocket copy() {
+		Rocket copy = (Rocket) super.copy();
 		
 		// Rocket copy is cloned, so non-trivial members must be cloned as well:
-		copy.stageMap = new HashMap<Integer, AxialStage>();
 		copy.configSet = new FlightConfigurableParameterSet<FlightConfiguration>( this.configSet );
+		copy.stageMap = new HashMap<Integer, AxialStage>();
 		copy.selectedConfiguration = copy.configSet.get( this.getSelectedConfiguration().getId());
 		copy.listenerList = new ArrayList<EventListener>();
 		
@@ -462,17 +462,7 @@ public class Rocket extends ComponentAssembly {
 	
 	@Override
 	public void update(){
-		updateStageMap();
 		updateConfigurations();
-	}
-	
-	private void updateStageMap(){
-		for( RocketComponent component : getChildren() ){
-			if (component instanceof AxialStage) {
-				AxialStage stage = (AxialStage) component;
-				trackStage(stage);
-			}
-		}
 	}
 	
 	private void updateConfigurations(){

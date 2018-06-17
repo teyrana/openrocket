@@ -140,9 +140,8 @@ public class RocketOptimizationFunction implements Function {
 	 */
 	Simulation newSimulationInstance(Simulation simulation) {
 		synchronized (baseSimulation) {
-			Rocket newRocket = simulation.getRocket().copyWithOriginalID();
-			Simulation newSimulation = simulation.duplicateSimulation(newRocket);
-			return newSimulation;
+			Rocket newRocket = simulation.getRocket().copy();
+			return simulation.duplicateSimulation(newRocket);
 		}
 	}
 	

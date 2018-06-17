@@ -92,12 +92,11 @@ public class AxialStage extends ComponentAssembly implements FlightConfigurableC
 	}
 	
 	@Override
-	protected RocketComponent copyWithOriginalID() {
-		AxialStage copy = (AxialStage) super.copyWithOriginalID();
+	public RocketComponent copy() {
+		AxialStage copy = (AxialStage) super.copy();
 		copy.separations = new FlightConfigurableParameterSet<StageSeparationConfiguration>(separations);
 		return copy;
 	}
-
 	
 	/** 
 	 * Stages may be positioned relative to other stages. In that case, this will set the stage number 

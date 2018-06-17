@@ -346,16 +346,16 @@ public class InnerTube extends ThicknessRingComponent implements AxialPositionab
 	}
 	
 	@Override
-	protected RocketComponent copyWithOriginalID() {
-		InnerTube copy = (InnerTube) super.copyWithOriginalID();
+	public RocketComponent copy() {
+		InnerTube copy = (InnerTube) super.copy();
 		if( copy == this ){
-			new IllegalArgumentException(" copyWithOriginalID should return a different instance! ");
+			throw new IllegalArgumentException(" copy should return a different instance! ");
 		}
-		if( copy.motors == this.motors ){
-			new IllegalArgumentException(" copyWithOriginalID should produce different motorSet instances! ");
-		}
-		
+
 		copy.motors = new MotorConfigurationSet( this.motors, copy );
+		if( copy.motors == this.motors ){
+			throw new IllegalArgumentException(" copy should produce different motorSet instances! ");
+		}
 		
 		return copy;
 	}

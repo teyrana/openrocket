@@ -88,12 +88,6 @@ public class ParallelStage extends AxialStage implements FlightConfigurableCompo
 	public void copyFlightConfiguration(FlightConfigurationId oldConfigId, FlightConfigurationId newConfigId) {
 		this.separations.copyFlightConfiguration(oldConfigId, newConfigId);
 	}
-	
-	@Override
-	protected RocketComponent copyWithOriginalID() {
-		ParallelStage copy = (ParallelStage) (super.copyWithOriginalID());
-		return copy;
-	}
 
 	@Override
 	public double getAngleOffset() {

@@ -316,8 +316,8 @@ public class FreeformFinSet extends FinSet {
 	
 	
 	@Override
-	protected RocketComponent copyWithOriginalID() {
-		RocketComponent c = super.copyWithOriginalID();
+	public RocketComponent copy() {
+		RocketComponent c = super.copy();
 		((FreeformFinSet) c).points = this.points.clone();
 		return c;
 	}

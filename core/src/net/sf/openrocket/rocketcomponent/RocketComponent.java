@@ -106,7 +106,7 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	private String comment = "";
 	
 	// Unique ID of the component
-	private UUID id = null;
+	private final UUID id;
 	
 	// Preset component this component is based upon
 	private ComponentPreset presetComponent = null;
@@ -122,20 +122,24 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	
 	
 	////  NOTE !!!  All fields must be copied in the method copyFrom()!  ////
-	
-	
-	
+
 	/**
 	 * Default constructor.  Sets the name of the component to the component's static name
 	 * and the relative position of the component.
 	 */
-	public RocketComponent( AxialMethod newAxialMethod ) {
+	public RocketComponent(){
 		// These must not fire any events, due to Rocket undo system initialization
 		this.name = getComponentName();
-		this.axialMethod = newAxialMethod;
-		newID();
+		this.id = UUID.randomUUID();
 	}
-	
+
+	public RocketComponent( AxialMethod newAxialMethod ) {
+		this();
+
+		// These must not fire any events, due to Rocket undo system initialization
+		this.axialMethod = newAxialMethod;
+	}
+
 	////////////  Methods that must be implemented  ////////////
 	
 	
@@ -339,69 +343,37 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	 *
 	 * @return A deep copy of the structure.
 	 */
-	public final RocketComponent copy() {
-		RocketComponent clone = copyWithOriginalID();
-		
-		Iterator<RocketComponent> iterator = clone.iterator(true);
-		while (iterator.hasNext()) {
-			iterator.next().newID();
-		}
-		return clone;
-	}
-	
-	
-	
-	/**
-	 * Make a deep copy of the rocket component tree structure from this component
-	 * downwards while maintaining the component ID's.  The purpose of this method is
-	 * to allow copies to be created with the original ID's for the purpose of the
-	 * undo/redo mechanism.  This method should not be used for other purposes,
-	 * such as copy/paste.  This method does not fire any events.
-	 * <p>
-	 * This method must be overridden by any component that refers to mutable objects,
-	 * or if some fields should not be copied.  This should be performed by
-	 * <code>RocketComponent c = super.copyWithOriginalID();</code> and then cloning/modifying
-	 * the appropriate fields.
-	 * <p>
-	 * This is not performed as serializing/deserializing for performance reasons.
-	 *
-	 * @return A deep copy of the structure.
-	 */
-	protected RocketComponent copyWithOriginalID() {
-		mutex.lock("copyWithOriginalID");
+	public RocketComponent copy() {
+		RocketComponent clone;
 		try {
-			checkState();
-			RocketComponent clone;
-			try {
-				clone = (RocketComponent) this.clone();
-			} catch (CloneNotSupportedException e) {
-				throw new BugException("CloneNotSupportedException encountered, report a bug!", e);
-			}
-			
-			// Reset the mutex
-			clone.mutex = SafetyMutex.newInstance();
-			
-			// Reset all parent/child information
-			clone.parent = null;
-			clone.children = new ArrayList<RocketComponent>();
-			
-			// Add copied children to the structure without firing events.
-			for (RocketComponent child : this.children) {
-				RocketComponent childCopy = child.copyWithOriginalID();
-				// Don't use addChild(...) method since it fires events
-				clone.children.add(childCopy);
-				childCopy.parent = clone;
-			}
-			
-			this.checkComponentStructure();
-			clone.checkComponentStructure();
-			
-			return clone;
-		} finally {
-			mutex.unlock("copyWithOriginalID");
+			clone = (RocketComponent) this.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new BugException("CloneNotSupportedException encountered, report a bug!", e);
 		}
+
+		// Reset the mutex
+		clone.mutex = SafetyMutex.newInstance();
+
+		// Reset all parent/child information
+		clone.parent = null;
+		clone.children = new ArrayList<RocketComponent>();
+
+		// Add copied children to the structure without firing events.
+		for (RocketComponent child : this.children) {
+			RocketComponent childCopy = child.copy();
+
+			// Don't use addChild(...) method since it fires events
+			clone.children.add(childCopy);
+			childCopy.parent = clone;
+		}
+
+		this.checkComponentStructure();
+		clone.checkComponentStructure();
+
+		return clone;
+
 	}
-	
+
 	
 	//////////////  Methods that may not be overridden  ////////////
 	
@@ -874,16 +846,6 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 	public final String getDebugName() {
 		return (name + "/" + id.toString().substring(0,8));
 	}
-	
-	/**
-	 * Generate a new ID for this component.
-	 */
-	private final void newID() {
-		mutex.verify();
-		this.id = UUID.randomUUID();
-	}
-	
-	
 	
 	
 	/**
@@ -2027,7 +1989,7 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 		
 		// Copy new children to this component
 		for (RocketComponent c : src.children) {
-			RocketComponent copy = c.copyWithOriginalID();
+			RocketComponent copy = c.copy();
 			this.children.add(copy);
 			copy.parent = this;
 		}
@@ -2048,7 +2010,6 @@ public abstract class RocketComponent implements ChangeSource, Cloneable, Iterab
 		this.overrideSubcomponents = src.overrideSubcomponents;
 		this.name = src.name;
 		this.comment = src.comment;
-		this.id = src.id;
 		
 		// Add source components to invalidation tree
 		for (RocketComponent c : src) {

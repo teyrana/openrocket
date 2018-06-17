@@ -115,8 +115,8 @@ public abstract class RecoveryDevice extends MassObject implements FlightConfigu
 	}
 	
 	@Override
-	protected RocketComponent copyWithOriginalID() {
-		RecoveryDevice copy = (RecoveryDevice) super.copyWithOriginalID();
+	public RocketComponent copy() {
+		RecoveryDevice copy = (RecoveryDevice) super.copy();
 		copy.deploymentConfigurations = new FlightConfigurableParameterSet<DeploymentConfiguration>(deploymentConfigurations);
 		return copy;
 	}

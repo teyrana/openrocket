@@ -471,8 +471,8 @@ public class BodyTube extends SymmetricComponent implements MotorMount, Coaxial 
 	}
 	
 	@Override
-	protected RocketComponent copyWithOriginalID() {
-		BodyTube copy = (BodyTube) super.copyWithOriginalID();
+	public RocketComponent copy() {
+		BodyTube copy = (BodyTube) super.copy();
 		
 		copy.motors = new MotorConfigurationSet( this.motors, copy );
 		return copy;

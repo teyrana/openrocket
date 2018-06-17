@@ -49,12 +49,12 @@ public class OpenRocketDocument implements ComponentChangeListener {
 	/**
 	 * The minimum number of undo levels that are stored.
 	 */
-	public static final int UNDO_LEVELS = 50;
+	private static final int UNDO_LEVELS = 50;
 	/**
 	 * The margin of the undo levels.  After the number of undo levels exceeds 
 	 * UNDO_LEVELS by this amount the undo is purged to that length.
 	 */
-	public static final int UNDO_MARGIN = 10;
+	private static final int UNDO_MARGIN = 10;
 	
 	public static final String SIMULATION_NAME_PREFIX = "Simulation ";
 	
@@ -483,7 +483,7 @@ public class OpenRocketDocument implements ComponentChangeListener {
 	 */
 	private void addStateToUndoHistory(String description) {
 		// Add the current state to the undo history
-		undoHistory.add(rocket.copyWithOriginalID());
+		undoHistory.add(rocket.copy());
 		undoDescription.add(null);
 		nextDescription = description;
 		undoPosition++;
@@ -572,7 +572,7 @@ public class OpenRocketDocument implements ComponentChangeListener {
 		undoHistory.clear();
 		undoDescription.clear();
 		
-		undoHistory.add(rocket.copyWithOriginalID());
+		undoHistory.add(rocket.copy());
 		undoDescription.add(null);
 		undoPosition = 0;
 		
@@ -686,14 +686,14 @@ public class OpenRocketDocument implements ComponentChangeListener {
 				logUndoError("undo position inconsistency");
 			}
 			// Modifications have been made, save the state and restore previous state
-			undoHistory.add(rocket.copyWithOriginalID());
+			undoHistory.add(rocket.copy());
 			undoDescription.add(null);
 		}
 		
 		rocket.checkComponentStructure();
 		undoHistory.get(undoPosition).checkComponentStructure();
-		undoHistory.get(undoPosition).copyWithOriginalID().checkComponentStructure();
-		rocket.loadFrom(undoHistory.get(undoPosition).copyWithOriginalID());
+		undoHistory.get(undoPosition).copy().checkComponentStructure();
+		rocket.loadFrom(undoHistory.get(undoPosition).copy());
 		rocket.checkComponentStructure();
 	}
 	
@@ -715,7 +715,7 @@ public class OpenRocketDocument implements ComponentChangeListener {
 		
 		undoPosition++;
 		
-		rocket.loadFrom(undoHistory.get(undoPosition).copyWithOriginalID());
+		rocket.loadFrom(undoHistory.get(undoPosition).copy());
 	}
 	
 	
@@ -753,7 +753,7 @@ public class OpenRocketDocument implements ComponentChangeListener {
 	 * @return	a copy of this document.
 	 */
 	public OpenRocketDocument copy() {
-		Rocket rocketCopy = rocket.copyWithOriginalID();
+		Rocket rocketCopy = rocket.copy();
 		OpenRocketDocument documentCopy = OpenRocketDocumentFactory.createDocumentFromRocket(rocketCopy);
 		
 		for (Simulation s : simulations) {

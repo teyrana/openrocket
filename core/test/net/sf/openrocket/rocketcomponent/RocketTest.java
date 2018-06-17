@@ -27,7 +27,7 @@ public class RocketTest extends BaseTestCase {
 		rkt1.setFlightConfiguration( config2.getId(), config2);
 		
 		// vvvv test target vvvv 
-		Rocket rkt2 = rkt1.copyWithOriginalID();
+		Rocket rkt2 = rkt1.copy();
 		// ^^^^ test target ^^^^
 		
 		FlightConfiguration config4 = rkt2.getSelectedConfiguration();
