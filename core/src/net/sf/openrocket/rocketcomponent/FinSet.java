@@ -790,7 +790,9 @@ public abstract class FinSet extends ExternalComponent implements AxialPositiona
 			this.centerOfMass = Coordinate.NaN;
 			this.totalVolume = Double.NaN;
 			this.cantRotation = null;
+			validateFinTab();
 		}
+		
 		super.componentChanged(e);
 	}
 	
